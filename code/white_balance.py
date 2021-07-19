@@ -9,7 +9,7 @@ import os
 # cv.imshow("cropped", crop_img)
 # cv.waitKey(0)
 # print(crop_img)
-img = cv.imread('../calibration_image/28.png' )
+img = cv.imread('../img_graycard_6mm/0.png' )
 crop_img = img[555:555+200, 155:155+200]
 # cv.imshow("cropped", crop_img)
 # cv.waitKey(0)
@@ -17,9 +17,9 @@ avgR = int(np.mean(crop_img[:, :, 2]))
 avgG = int(np.mean(crop_img[:, :, 1]))
 avgB = int(np.mean(crop_img[:, :, 0]))
 print(avgB, avgG, avgR)
-brightnessR = avgR - 131
-brightnessG = avgG - 131
-brightnessB = avgB - 131
+brightnessR = avgR - 119
+brightnessG = avgG - 119
+brightnessB = avgB - 119
 
 # data = []  # using an array is more convenient for tabulate.
 #

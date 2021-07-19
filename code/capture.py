@@ -7,7 +7,7 @@ import time
 # Flip the image by setting the flip_method (most common values: 0 and 2)
 # display_width and display_height determine the size of the window on the screen
 
-directory = r"/home/jetson/counting_duckweed/calib_cam_new/"
+directory = r"/home/jetson/counting_duckweed/img_graycard_16mm/"
 os.chdir(directory)
 
 def gstreamer_pipeline(
