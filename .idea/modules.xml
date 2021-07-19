@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/couting_duckweed.iml" filepath="$PROJECT_DIR$/.idea/couting_duckweed.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/counting_duckweed.iml" filepath="$PROJECT_DIR$/.idea/counting_duckweed.iml" />
     </modules>
   </component>
 </project>
