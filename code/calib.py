@@ -10,7 +10,7 @@ objp[:,:2] = np.mgrid[0:9,0:9].T.reshape(-1,2)
 # Arrays to store object points and image points from all the images.
 objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
-images = glob.glob('../calib_cam_new/*.png')
+images = glob.glob('../img_calib_cam_6mm/*.png')
 for fname in images:
     img = cv.imread(fname)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -30,7 +30,7 @@ cv.destroyAllWindows()
 ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 
 
-img = cv.imread('../image_cal_area/5.png')
+img = cv.imread('../img_graycard_6mm/3.png')
 h,  w = img.shape[:2]
 newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w,h), 1, (w,h))
 
@@ -39,7 +39,9 @@ dst = cv.undistort(img, mtx, dist, None, newcameramtx)
 # crop the image
 x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
-cv.imwrite('../images/5.png', dst)
+cv.imshow("img undistorted", dst)
+cv.waitKey(0)
+# cv.imwrite('../images/5.png', dst)
 
 # undistort
 # mapx, mapy = cv.initUndistortRectifyMap(mtx, dist, None, newcameramtx, (w,h), 5)
@@ -59,7 +61,7 @@ print("tvecs : \n")
 print(tvecs)
 
 
-cv_file = cv.FileStorage("test.xml", cv.FILE_STORAGE_WRITE)
+cv_file = cv.FileStorage("calib_6.xml", cv.FILE_STORAGE_WRITE)
 cv_file.write("camera_matrix" , mtx)
 cv_file.write("dist" , dist)
 cv_file.release()

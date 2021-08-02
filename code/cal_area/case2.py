@@ -3,79 +3,48 @@ import cv2
 import numpy as np
 import argparse
 
-originalImage  = cv.imread('image/calibresult.png')
+def center_crop(img, dim):
+    width, height = img.shape[1], img.shape[0]
+    # process crop width and height for max available dimension
+    crop_width = dim[0] if dim[0]<img.shape[1] else img.shape[1]
+    crop_height = dim[1] if dim[1]<img.shape[0] else img.shape[0]
+    mid_x, mid_y = int(width/2), int(height/2)
+    cw2, ch2 = int(crop_width/2), int(crop_height/2)
+    crop_img = img[mid_y-ch2:mid_y+ch2, mid_x-cw2:mid_x+cw2]
+    return crop_img
+
+originalImage  = cv.imread('../../img/2.png')
 # cv.imshow("originalImage", originalImage)
 # cv.waitKey(0)
-originalImage = cv.cvtColor(originalImage , cv.COLOR_BGR2RGB)
+
+originalImage =  center_crop(originalImage,(500,400))
+cv2.imshow("img drop", originalImage)
+cv2.waitKey(0)
+
+# originalImage = cv.cvtColor(originalImage , cv.COLOR_BGR2RGB)
 # cv.imshow("originalImage", originalImage)
 # cv.waitKey(0)
 
-reshapedImage = np.float32(originalImage.reshape(-1, 3))
+cannyImage = cv.Canny(originalImage,10,200)
+cv2.imshow("cannyImage", cannyImage)
+cv2.waitKey(0)
 
-numberOfClusters = 4
+contours, hierarchy = cv.findContours(originalImage, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+cv.drawContours(originalImage, contours, -1, (0,0,255), cv.CHAIN_APPROX_SIMPLE)
+# cv.imwrite("image/initialContoursImage.jpg", initialContoursImage)
+cv2.imshow("initialContoursImage", originalImage)
+cv2.waitKey(0)
+with_contours = cv2.drawContours(originalImage, contours, -1, (255, 0, 255), 3)
+print("contours : ", str(len(contours)))
+for c in contours:
+    x, y, w, h = cv2.boundingRect(c)
+    print("pixel value: ",cv2.contourArea(c))
+    # Make sure contour area is large enough
+    if (cv2.contourArea(c)) > 10:
+        cv2.rectangle(with_contours, (x, y), (x + w, y + h), (255, 0, 0), 5)
 
-stopCriteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 100, 0.1)
-
-ret, labels, clusters = cv.kmeans(reshapedImage, numberOfClusters, None, stopCriteria, 10, cv.KMEANS_RANDOM_CENTERS)
-
-clusters = np.uint8(clusters)
-
-intermediateImage = clusters[labels.flatten()]
-clusteredImage = intermediateImage.reshape((originalImage.shape))
-print(clusteredImage)
-
-cv.imwrite("image/clusteredImage.jpg", clusteredImage)
-
-removedCluster = 1
-
-cannyImage = np.copy(originalImage).reshape((-1, 3))
-cannyImage[labels.flatten() == removedCluster] = [0, 0, 0]
-
-cannyImage = cv.Canny(cannyImage,100,200).reshape(originalImage.shape)
-cv.imwrite("image/cannyImage.jpg", cannyImage)
-
-initialContoursImage = np.copy(cannyImage)
-imgray = cv.cvtColor(initialContoursImage, cv.COLOR_BGR2GRAY)
-cv.imwrite("image/imgray.jpg", cannyImage)
-_, thresh = cv.threshold(imgray, 50, 255, 0)
-cv.imwrite("image/thresh.jpg", thresh)
-contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-cv.drawContours(initialContoursImage, contours, -1, (0,0,255), cv.CHAIN_APPROX_SIMPLE)
-cv.imwrite("image/initialContoursImage.jpg", initialContoursImage)
-
-cnt = contours[0]
-largest_area=0
-index = 0
-for contour in contours:
-    if index > 0:
-        area = cv.contourArea(contour)
-        if (area>largest_area):
-            largest_area=area
-            cnt = contours[index]
-    index = index + 1
-
-biggestContourImage = np.copy(originalImage)
-cv.drawContours(biggestContourImage, [cnt], -1, (0,0,255), 3)
-cv.imwrite("../images/biggestContourImage.jpg", biggestContourImage)
-
-
-
-
-
-# calculate pixel object
-
-# src = cv.imread("../images/calibresult.png", cv.IMREAD_GRAYSCALE)
-# ret, image_edit = cv2.threshold(src, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
-#
-# cv.imwrite("../images/binary.jpg", image_edit)
-# cv.imshow("binary", image_edit)
-# cv.waitKey(0)
-# height, width  = image_edit.shape
-# print(height, width)
-# nzcount = cv2.countNonZero(image_edit)
-# print(nzcount)
-# print("percentage :", nzcount)
-
+cv2.imshow("final", originalImage)
+cv2.waitKey(0)
 
 
 
